@@ -1,0 +1,182 @@
+/* Reset general */
+body, h1, form, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fondo tipo fibra de carbono */
+body {
+    font-family: 'Arial', sans-serif;
+    background: #1c1c1c;
+    background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Título con efecto deportivo */
+h1 {
+    color: #ffd700;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 5px rgba(255, 215, 0, 0.8);
+    margin-bottom: 20px; /* Mejora espaciado */
+}
+
+/* Contenedor del formulario */
+form {
+    background: #2a2a2a;
+    padding: 25px 35px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    width: 100%;
+    max-width: 600px;
+    border: 2px solid #ffd700;
+}
+
+/* Estilos de los campos de entrada */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 2px solid #ffd700;
+    background: #333;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+input:focus {
+    border-color: #ff0000;
+    outline: none;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+}
+
+/* Botones con estilo racing */
+button {
+    background: #ff0000;
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+    transition: 0.3s ease-in-out;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background: #d40000;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+}
+
+/* Estilos de los campos dinámicos */
+.dynamic-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    background: rgba(255, 0, 0, 0.1);
+    padding-bottom: 15px; /* Mejor espaciado */
+}
+
+.dynamic-line {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    padding-bottom: 10px; /* Mejor espaciado */
+}
+
+.dynamic-line input {
+    flex: 1;
+}
+
+/* Botón para añadir y eliminar líneas */
+.add-line-btn {
+    background: #ffd700;
+    color: #1c1c1c;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.add-line-btn:hover {
+    background: #ffcc00;
+}
+
+.remove-line-btn {
+    background: #8b0000; /* Rojo oscuro para diferenciarlo */
+    color: white;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.remove-line-btn:hover {
+    background: #a50000;
+}
+
+/* Mensajes de carga */
+#loading {
+    color: white;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    form {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    input {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    button {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    form {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+    }
+
+    input {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    button {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}

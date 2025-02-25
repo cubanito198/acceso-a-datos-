@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<root>
+  <staticData>
+    <customerName>sisi</customerName>
+    <date>2025-02-26</date>
+  </staticData>
+  <dynamicData>
+    <product_0/>
+  </dynamicData>
+</root>

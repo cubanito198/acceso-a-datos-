@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<root>
+  <staticData>
+    <name>Luis sanchez</name>
+    <category>coche</category>
+    <price>4</price>
+    <stock>4</stock>
+  </staticData>
+  <dynamicData/>
+</root>

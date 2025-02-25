@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilo.css">
+    <title>Dynamic Form</title>
+</head>
+<body>
+    <h1>Dynamic Form</h1>
+    <form id="dynamicForm">
+        <div id="staticFields"></div>
+        <div id="dynamicFieldsContainer"></div>
+        <button type="submit" id="submitBtn">Submit Form</button>
+        <div id="loading" style="display:none;">Processing...</div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fileParam = urlParams.get('f');
+            if (!fileParam) {
+                alert("Error: Missing 'f' parameter in the URL");
+                return;
+            }
+
+            const formContainer = document.getElementById('dynamicForm');
+            const staticFieldsContainer = document.getElementById('staticFields');
+            const dynamicFieldsContainer = document.getElementById('dynamicFieldsContainer');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingIndicator = document.getElementById('loading');
+
+            try {
+                const response = await fetch(`modelos/${fileParam}.xml`);
+                if (!response.ok) throw new Error(`Error loading XML: ${response.status}`);
+                const xmlText = await response.text();
+                const xml = new DOMParser().parseFromString(xmlText, 'application/xml');
+                if (xml.querySelector('parsererror')) throw new Error('Invalid XML format');
+
+                xml.querySelectorAll('fields > field').forEach(field => renderField(field, staticFieldsContainer));
+                xml.querySelectorAll('dynamicFields > fieldGroup').forEach(group => renderDynamicFieldGroup(group, dynamicFieldsContainer));
+            } catch (error) {
+                console.error(error);
+                alert("Failed to load form structure");
+            }
+
+            formContainer.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                submitBtn.style.display = 'none';
+                loadingIndicator.style.display = 'block';
+
+                const staticData = {};
+                document.querySelectorAll('#staticFields input').forEach(input => {
+                    staticData[input.name] = input.value.trim();
+                });
+
+                const dynamicData = {};
+                    document.querySelectorAll('.dynamic-group').forEach((group, index) => {
+                        dynamicData[`product_${index}`] = [];
+                        
+                        group.querySelectorAll('.dynamic-line').forEach(line => {
+                            const lineData = {};
+                            line.querySelectorAll('input').forEach(input => {
+                                const cleanName = input.name.replace(/\[\]/g, '');
+                                lineData[cleanName] = input.value.trim();
+                            });
+                            dynamicData[`product_${index}`].push(lineData);
+                        });
+                    });
+
+
+                const formData = { staticData, dynamicData };
+
+                try {
+                    const response = await fetch(`guardaxml.php?f=${fileParam}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData),
+                    });
+                    const result = await response.text();
+                    alert("Form submitted successfully!" + result);
+                    formContainer.reset();
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert("An error occurred while submitting the form.");
+                } finally {
+                    submitBtn.style.display = 'block';
+                    loadingIndicator.style.display = 'none';
+                }
+            });
+        });
+
+        function renderField(field, container) {
+            const name = field.querySelector('name')?.textContent;
+            if (!name) return;
+
+            const input = document.createElement('input');
+            input.type = field.querySelector('type')?.textContent || 'text';
+            input.name = name;
+            input.placeholder = field.querySelector('placeholder')?.textContent || '';
+            input.required = field.querySelector('required')?.textContent === 'true';
+            container.appendChild(input);
+        }
+
+        function renderDynamicFieldGroup(fieldGroup, container) {
+            const groupName = fieldGroup.getAttribute('name');
+            if (!groupName) return;
+
+            const groupContainer = document.createElement('div');
+            groupContainer.classList.add('dynamic-group');
+            container.appendChild(groupContainer);
+
+            const addLineButton = document.createElement('button');
+            addLineButton.type = 'button';
+            addLineButton.textContent = `+ Add ${groupName}`;
+            addLineButton.classList.add('add-line-btn');
+            container.appendChild(addLineButton);
+
+            addLineButton.addEventListener('click', () => renderDynamicLine(groupContainer, fieldGroup));
+            renderDynamicLine(groupContainer, fieldGroup);
+        }
+
+        function renderDynamicLine(groupContainer, fieldGroup) {
+            const line = document.createElement('div');
+            line.classList.add('dynamic-line');
+
+            fieldGroup.querySelectorAll('field').forEach(field => {
+                const name = field.querySelector('name')?.textContent;
+                if (!name) return;
+
+                const input = document.createElement('input');
+                input.type = field.querySelector('type')?.textContent || 'text';
+                input.name = `${fieldGroup.getAttribute('name')}[][${name}]`;
+                input.placeholder = field.querySelector('placeholder')?.textContent || '';
+                input.required = field.querySelector('required')?.textContent === 'true';
+                line.appendChild(input);
+            });
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.textContent = '-';
+            removeButton.classList.add('remove-line-btn');
+            removeButton.addEventListener('click', () => groupContainer.removeChild(line));
+            line.appendChild(removeButton);
+
+            groupContainer.appendChild(line);
+        }
+    </script>
+</body>
+</html>
