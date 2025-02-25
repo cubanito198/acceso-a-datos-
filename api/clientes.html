@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Clientes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: white;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+        .cliente-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .cerrar-btn {
+    background-color: #ff4d4d; /* Rojo vibrante */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: block;
+    margin: 20px auto;
+}
+
+.cerrar-btn:hover {
+    background-color: #cc0000; /* Rojo más oscuro al pasar el mouse */
+}
+
+    </style>
+</head>
+<body>
+    <h1>Lista de Clientes</h1>
+    <div class="grid" id="clientesGrid"></div>
+    <div id="detalleCliente" style="display: none; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); max-width: 400px; margin: 20px auto;">
+    </div>
+    
+    
+    <script>
+        // Cargar los clientes desde la API
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('http://localhost/segundo/acceso%20a%20datos/api/api.php?o=listarClientes')
+                .then(response => response.json())
+                .then(data => {
+                    const grid = document.getElementById('clientesGrid');
+                    grid.innerHTML = ""; // Limpiar contenido previo
+    
+                    data.forEach(cliente => {
+                        let div = document.createElement("div");
+                        div.classList.add("cliente-card");
+                        div.innerHTML = `<h3>${cliente.nombre} ${cliente.apellidos}</h3>`;
+                        div.onclick = () => mostrarDetalle(cliente.identificador); // 🔥 Asigna el evento
+                        grid.appendChild(div);
+                    });
+                })
+                .catch(error => console.error('Error cargando clientes:', error));
+        });
+    
+        function mostrarDetalle(id) {
+    console.log("Clic en cliente con ID:", id); // Verificar si se ejecuta
+
+    fetch(`http://localhost/segundo/acceso%20a%20datos/api/api.php?o=obtenerCliente&id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Respuesta de la API:", data); // Verificar la respuesta
+
+            if (data.resultado === "ok") {
+                let cliente = data.cliente;
+                let detalleDiv = document.getElementById("detalleCliente");
+
+                // Mostramos los datos en el div con un botón más bonito
+                detalleDiv.innerHTML = `
+                    <h2>${cliente.nombre} ${cliente.apellidos}</h2>
+                    <p><strong>Email:</strong> ${cliente.email}</p>
+                    <p><strong>Dirección:</strong> ${cliente.direccion}</p>
+                    <p><strong>Población:</strong> ${cliente.poblacion}</p>
+                    <p><strong>CP:</strong> ${cliente.cp}</p>
+                    <p><strong>País:</strong> ${cliente.pais}</p>
+                    <button class="cerrar-btn" onclick="cerrarDetalle()">✖ Cerrar</button>
+                `;
+
+                detalleDiv.style.display = "block"; // Mostrar el div
+            } else {
+                alert("Error: " + data.mensaje);
+            }
+        })
+        .catch(error => console.error("Error obteniendo cliente:", error));
+}
+
+// Función para cerrar el detalle
+function cerrarDetalle() {
+    document.getElementById("detalleCliente").style.display = "none";
+}
+
+
+    </script>
+    
+</body>
+</html>

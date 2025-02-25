@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insertar Cliente</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+        }
+        form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        background: linear-gradient(to right, #ff416c, #ff4b2b);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        max-width: 600px;
+        margin: auto;
+    }
+    h1 {
+        grid-column: span 2;
+        text-align: center;
+        color: white;
+        font-size: 22px;
+    }
+    label {
+        font-weight: bold;
+        color: white;
+    }
+        input[type="text"] {
+            width: 93%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #6a11cb;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            display: none;
+            text-align: center;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .hidden {
+            display: none;
+        }
+        .btn-submit {
+        grid-column: span 2;
+        background: white;
+        color: #ff416c;
+        border: none;
+        padding: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-submit:hover {
+        background: #ff4b2b;
+        color: white;
+    }
+    
+    </style>
+</head>
+<body>
+    <form id="clienteForm" action="api.php?o=insertarCliente" method="POST">
+        <h1>Formulario de Cliente</h1>
+    
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+    
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" id="apellidos" name="apellidos" required>
+    
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required>
+    
+        <label for="direccion">Dirección:</label>
+        <input type="text" id="direccion" name="direccion" required>
+    
+        <label for="poblacion">Población:</label>
+        <input type="text" id="poblacion" name="poblacion" required>
+    
+        <label for="cp">Código Postal:</label>
+        <input type="text" id="cp" name="cp" required>
+    
+        <label for="pais">País:</label>
+        <input type="text" id="pais" name="pais" required>
+    
+        <input type="hidden" name="clave" value="TfdoHwvcwfTcWT4zkv9vN7">
+    
+        <input type="submit" value="Insertar Cliente">
+    </form>
+    
+
+    <div id="message" class="message"></div>
+
+    <script>
+        document.getElementById('clienteForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Evitar el envío tradicional del formulario
+
+            // Obtener los datos del formulario
+            const formData = new FormData(this);
+
+            // Enviar los datos al servidor usando Fetch API
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                // Verificar si la respuesta es exitosa (status 200)
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                return response.json(); // Convertir la respuesta a JSON
+            })
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                if (data && data.resultado === 'ok') {
+                    messageDiv.textContent = data.mensaje || 'Cliente insertado correctamente';
+                    messageDiv.className = 'message success';
+                    messageDiv.style.display = 'block';
+                    
+                    // Redirigir a la página de clientes después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'clientes.html'; // Cambia esto por la URL real de tu página de clientes
+                    }, 2000);
+                } else {
+                    messageDiv.textContent = data.mensaje || 'Error desconocido';
+                    messageDiv.className = 'message error';
+                    messageDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = 'Hubo un problema con la solicitud. Intenta de nuevo más tarde.';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
